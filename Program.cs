@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Threading;
 using AppClient.Repositories;
 
@@ -7,17 +6,10 @@ namespace AppClient
 {
     class Program
     {
-        static readonly IClientRepository _clientRepository = new MemoryClientRepository();
-
         static void Main(string[] args)
         {
             DefineCulture();
-            while (true)
-            {
-                Menu.ShowMenu();
-                Menu.ChooseOption(_clientRepository);
-                Console.ReadKey();
-            }
+            ExecuteAppWithDataInFile();
         }
 
         private static void DefineCulture()
@@ -25,6 +17,21 @@ namespace AppClient
             var culture = new CultureInfo("pt-BR");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+        }
+
+        private static void ExecuteAppWithDataInMemory()
+        {
+            var clientRepository = new MemoryClientRepository();
+            DefineCulture();
+            Menu.Execute(clientRepository);
+        }
+
+        private static void ExecuteAppWithDataInFile()
+        {
+            var clientRepository = new FileClientRepository();
+            DefineCulture();
+            Menu.Execute(clientRepository);
+            clientRepository.StoreData();
         }
     }
 }
